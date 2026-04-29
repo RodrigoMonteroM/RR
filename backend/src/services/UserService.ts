@@ -1,0 +1,50 @@
+import { logger } from "@/lib/logger";
+import { userRepository } from "@/repositories/user.repository";
+import { CreateUserInput } from "@/schema/userSchema";
+
+export default class UserService {
+    static async getUserById(id: string) {
+        try {
+            return await userRepository.findById(id);
+        } catch (error: unknown) {
+            logger.error("getUserById failed", error);
+            throw error;
+        }
+    }
+
+    static async getUserByEmail(email: string) {
+        try {
+            return await userRepository.findByEmail(email);
+        } catch (error: unknown) {
+            logger.error("getUserByEmail failed", error);
+            throw error;
+        }
+    }
+
+    static async getUserByNickname(nickname: string) {
+        try {
+            return await userRepository.findByNickname(nickname);
+        } catch (error: unknown) {
+            logger.error("getUserByNickname failed", error);
+            throw error;
+        }
+    }
+
+    static async createUser(data: CreateUserInput) {
+        try {
+            return await userRepository.create(data);
+        } catch (error: unknown) {
+            logger.error("createUser failed", error);
+            throw error;
+        }
+    }
+
+    static async searchUsers(query: string, currentUserId: string) {
+        try {
+            return await userRepository.searchByQuery(query, currentUserId);
+        } catch (error: unknown) {
+            logger.error("searchUsers failed", error);
+            throw error;
+        }
+    }
+}

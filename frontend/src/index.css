@@ -1,0 +1,91 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 25 32% 97%;        /* #FAF7F5 crema */
+    --foreground: 330 7% 22%;        /* #3D3539 oscuro */
+    --card: 0 0% 100%;
+    --card-foreground: 330 7% 22%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 330 7% 22%;
+    --primary: 355 30% 58%;          /* #B4757A rosa burdeos */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 355 20% 94%;
+    --secondary-foreground: 330 7% 22%;
+    --muted: 17 16% 92%;             /* #EDE8E6 */
+    --muted-foreground: 330 5% 45%;
+    --accent: 356 35% 74%;           /* #D4A5A8 rosa claro */
+    --accent-foreground: 330 7% 22%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 356 25% 85%;
+    --input: 356 20% 88%;
+    --ring: 355 30% 58%;
+    --radius: 0.75rem;
+  }
+
+  .dark {
+    --background: 330 10% 10%;         /* oscuro cálido */
+    --foreground: 25 20% 92%;          /* crema claro */
+    --card: 330 10% 14%;
+    --card-foreground: 25 20% 92%;
+    --popover: 330 10% 14%;
+    --popover-foreground: 25 20% 92%;
+    --primary: 355 30% 58%;            /* mismo rosa burdeos */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 330 10% 18%;
+    --secondary-foreground: 25 20% 92%;
+    --muted: 330 10% 18%;
+    --muted-foreground: 330 5% 60%;
+    --accent: 356 25% 30%;
+    --accent-foreground: 25 20% 92%;
+    --destructive: 0 62.8% 40%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 330 10% 22%;
+    --input: 330 10% 20%;
+    --ring: 355 30% 58%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'DM Sans', system-ui, sans-serif;
+    background-image:
+      radial-gradient(ellipse at 12% 65%, rgba(212, 165, 168, 0.14) 0%, transparent 55%),
+      radial-gradient(ellipse at 88% 12%, rgba(180, 117, 122, 0.09) 0%, transparent 50%);
+    background-attachment: fixed;
+  }
+
+  .dark body {
+    background-image:
+      radial-gradient(ellipse at 12% 65%, rgba(180, 117, 122, 0.10) 0%, transparent 55%),
+      radial-gradient(ellipse at 88% 12%, rgba(180, 117, 122, 0.06) 0%, transparent 50%);
+  }
+}
+
+@layer utilities {
+  .font-display {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+  }
+
+  /* Subtle dot-grid pattern for decorative panels */
+  .bg-dot-grid {
+    background-image: radial-gradient(circle, rgba(255, 255, 255, 0.22) 1px, transparent 1px);
+    background-size: 22px 22px;
+  }
+
+  /* Card elevation levels */
+  .card-base {
+    @apply bg-card rounded-2xl border border-border/40 shadow-[0_2px_20px_rgba(180,117,122,0.08),0_1px_3px_rgba(180,117,122,0.05)];
+  }
+
+  .card-hover {
+    @apply transition-shadow duration-300 hover:shadow-[0_6px_32px_rgba(180,117,122,0.14),0_2px_6px_rgba(180,117,122,0.07)];
+  }
+}

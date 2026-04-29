@@ -1,0 +1,78 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  nickname  String   @unique
+  firstName String
+  lastName  String
+  avatarUrl String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  couples CoupleUser[]
+  items   Item[]
+  sentRequests     CoupleRequest[] @relation("SentRequests")
+  receivedRequests CoupleRequest[] @relation("ReceivedRequests")
+}
+
+model Couple {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+
+  users CoupleUser[]
+  boxes Box[]
+}
+
+model CoupleUser {
+  id       String @id @default(uuid())
+  userId   String
+  coupleId String
+
+  user   User   @relation(fields: [userId], references: [id])
+  couple Couple @relation(fields: [coupleId], references: [id])
+
+  @@unique([userId, coupleId])
+}
+
+model Box {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  coupleId    String
+  createdAt   DateTime @default(now())
+
+  couple Couple @relation(fields: [coupleId], references: [id])
+  items  Item[]
+}
+
+model Item {
+  id              String   @id @default(uuid())
+  content         String
+  boxId           String
+  createdByUserId String
+  createdAt       DateTime @default(now())
+
+  box       Box  @relation(fields: [boxId], references: [id], onDelete: Cascade)
+  createdBy User @relation(fields: [createdByUserId], references: [id])
+}
+
+model CoupleRequest {
+  id          String   @id @default(uuid())
+  senderId    String
+  receiverId  String
+  status      String   @default("PENDING") // PENDING, ACCEPTED, REJECTED
+  createdAt   DateTime @default(now())
+
+  sender      User     @relation("SentRequests", fields: [senderId], references: [id])
+  receiver    User     @relation("ReceivedRequests", fields: [receiverId], references: [id])
+
+  @@unique([senderId, receiverId])
+}
