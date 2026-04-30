@@ -35,6 +35,7 @@ Estoy aprendiendo a programar. No quiero que me hagas todo el código, quiero en
 - Refactorizaciones sin permiso
 - Features no solicitadas
 - Que asumas lo que necesito
+- Operaciones destructivas sin permiso explícito (drops, deletes, resets de DB, rm -rf, etc.)
 
 ## Cómo pedir ayuda
 

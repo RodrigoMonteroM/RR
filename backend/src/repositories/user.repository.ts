@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { CreateUserInput } from "@/schema/userSchema";
+import { Record } from "@prisma/client/runtime/client";
 
 export const userRepository = {
     findById: (id: string) =>
@@ -33,4 +34,21 @@ export const userRepository = {
                 avatarUrl: true,
             }
         }),
+
+
+    searchUserByEmailorNickname: (nickname: string, email: string) => {
+        return prisma.user.findFirst({
+            where: {
+                OR: [
+                    { nickname },
+                    { email },
+                ],
+            },
+        });
+    },
+
+    update: (id: string, data: Record<string, unknown>) => {
+        prisma.user.update({ where: { id }, data });
+    }
+
 };

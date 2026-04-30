@@ -7,18 +7,20 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  password  String
-  nickname  String   @unique
-  firstName String
-  lastName  String
-  avatarUrl String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id                 String   @id @default(uuid())
+  email              String   @unique
+  password           String
+  nickname           String   @unique
+  firstName          String
+  lastName           String
+  resetToken         String   @unique
+  resetTokenExpirity DateTime
+  avatarUrl          String?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
 
-  couples CoupleUser[]
-  items   Item[]
+  couples          CoupleUser[]
+  items            Item[]
   sentRequests     CoupleRequest[] @relation("SentRequests")
   receivedRequests CoupleRequest[] @relation("ReceivedRequests")
 }
@@ -65,14 +67,14 @@ model Item {
 }
 
 model CoupleRequest {
-  id          String   @id @default(uuid())
-  senderId    String
-  receiverId  String
-  status      String   @default("PENDING") // PENDING, ACCEPTED, REJECTED
-  createdAt   DateTime @default(now())
+  id         String   @id @default(uuid())
+  senderId   String
+  receiverId String
+  status     String   @default("PENDING") // PENDING, ACCEPTED, REJECTED
+  createdAt  DateTime @default(now())
 
-  sender      User     @relation("SentRequests", fields: [senderId], references: [id])
-  receiver    User     @relation("ReceivedRequests", fields: [receiverId], references: [id])
+  sender   User @relation("SentRequests", fields: [senderId], references: [id])
+  receiver User @relation("ReceivedRequests", fields: [receiverId], references: [id])
 
   @@unique([senderId, receiverId])
 }

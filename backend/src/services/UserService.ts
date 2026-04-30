@@ -47,4 +47,12 @@ export default class UserService {
             throw error;
         }
     }
+
+    static async getUserByEmailOrNickname(email: string, nickname: string) {
+        try {
+            return await userRepository.searchUserByEmailorNickname(email, nickname);
+        } catch (error: unknown) {
+            logger.error("getUserByEmailOrNickname faild: ", error)
+        }
+    }
 }
