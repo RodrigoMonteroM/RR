@@ -55,4 +55,22 @@ export default class UserService {
             logger.error("getUserByEmailOrNickname faild: ", error)
         }
     }
+
+    static async updateUser(id: string, data: Record<string, unknown>) {
+        try {
+            return await userRepository.update(id, data);
+        } catch (error: unknown) {
+            logger.error("updateUser failed", error);
+            throw error;
+        }
+    }
+
+    static async getUserByResetToken(token: string) {
+        try {
+            return await userRepository.findByResetToken(token);
+        } catch (error: unknown) {
+            logger.error("getUserByResetToken failed", error);
+            throw error;
+        }
+    }
 }

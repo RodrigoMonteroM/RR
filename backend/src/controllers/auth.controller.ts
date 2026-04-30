@@ -72,29 +72,56 @@ export const me = async (req: Request, res: Response) => {
 export const forgotPassword = async (req: Request, res: Response) => {
     try {
         const { email } = req.body;
-        const user = await UserService.getUserByEmail(email)
+        const user = await UserService.getUserByEmail(email);
+
         if (!user) {
-            return res.status(200).json({ message: "User non trovato" });
+            return res.status(200).json({ message: "Si l'email esiste, riceverai un link" });
         }
 
-        const tokenResetPassword = crypto.randomUUID();
+        const resetToken = crypto.randomUUID();
 
         await userRepository.update(user.id, {
-            resetToken: tokenResetPassword,
-            resetTokenExpirity: new Date(Date.now() + 3600000)
-        })
+            resetToken,
+            resetTokenExpirity: new Date(Date.now() + 3600000),
+        });
 
-        await sendResetEmail(user.email, tokenResetPassword);
-        return res.status(200).json({ message: "Richiesta inviata, riceverai un link" });
+        try {
+            await sendResetEmail(user.email, resetToken);
+        } catch (emailError: unknown) {
+            logger.error("Failed to send reset email: ", emailError);
+        }
 
+        return res.status(200).json({ message: "Si l'email esiste, riceverai un link" });
     } catch (error: unknown) {
-        logger.error("Error in forgot password: ", forgotPassword);
+        logger.error("Error in forgot password: ", error);
         return res.status(500).json({ message: "Errore interno del server" });
     }
-}
+};
 
 
-export const resetPassword = async (req: Request, res: Response){
+export const resetPassword = async (req: Request, res: Response) => {
+    try {
+        const { token, password } = req.body;
 
-}
+        const user = await UserService.getUserByResetToken(token);
+        if (!user) {
+            return res.status(400).json({ message: "Token non valido" });
+        }
+
+        if (!user.resetTokenExpirity || user.resetTokenExpirity < new Date()) {
+            return res.status(400).json({ message: "Token scaduto" });
+        }
+
+        await userRepository.update(user.id, {
+            password,
+            resetToken: null,
+            resetTokenExpirity: null,
+        });
+
+        return res.status(200).json({ message: "Password aggiornata con successo" });
+    } catch (error: unknown) {
+        logger.error("Error in reset password: ", error);
+        return res.status(500).json({ message: "Errore interno del server" });
+    }
+};
 

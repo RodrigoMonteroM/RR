@@ -13,8 +13,8 @@ model User {
   nickname           String   @unique
   firstName          String
   lastName           String
-  resetToken         String   @unique
-  resetTokenExpirity DateTime
+  resetToken         String?   @unique
+  resetTokenExpirity DateTime?
   avatarUrl          String?
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt

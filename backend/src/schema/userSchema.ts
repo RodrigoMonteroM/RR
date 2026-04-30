@@ -14,5 +14,16 @@ export const loginUserSchema = z.object({
     password: z.string().min(1, "La password è obbligatoria")
 });
 
+export const forgotPasswordSchema = z.object({
+    email: z.string().email("Email non valida"),
+});
+
+export const resetPasswordSchema = z.object({
+    token: z.string().min(1, "Token obbligatorio"),
+    password: z.string().min(6, "La password deve contenere almeno 6 caratteri"),
+});
+
 export type CreateUserInput = z.infer<typeof createUserSchema>;
 export type LoginUserInput = z.infer<typeof loginUserSchema>;
+export type ForgotPasswordInput = z.infer<typeof forgotPasswordSchema>;
+export type ResetPasswordInput = z.infer<typeof resetPasswordSchema>;
