@@ -30,4 +30,9 @@ export const boxService = {
   deleteBox: async (id: string): Promise<void> => {
     await api.delete(`/boxes/${id}`);
   },
+
+  changeVisibility: async (id: string): Promise<Box> => {
+    const { data } = await api.put<Box>(`/boxes/${id}/visibility`);
+    return data;
+  },
 };

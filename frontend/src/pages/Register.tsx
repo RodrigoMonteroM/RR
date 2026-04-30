@@ -4,16 +4,15 @@ import { useMutation } from '@tanstack/react-query'
 import { Mail, Lock, User } from 'lucide-react'
 import { RegisterFormData } from '@/types/auth'
 import { authService } from '@/services/auth.service'
-import { useAuthStore } from '@/store/auth.store'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import RRLogo from '@/components/ui/Logo'
 import { ThemeToggle } from '@/components/ThemeToggle'
+import { toast } from 'sonner'
 
 export default function Register() {
   const navigate = useNavigate()
-  const setAuth = useAuthStore(state => state.setAuth)
 
   const [formData, setFormData] = useState<RegisterFormData>({
     nickname: '',
@@ -23,6 +22,7 @@ export default function Register() {
     lastName: '',
   })
 
+  const [confirmPassword, setConfirmPassword] = useState('')
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
   const registerMutation = useMutation({
@@ -32,9 +32,9 @@ export default function Register() {
     onMutate: () => {
       setErrorMessage(null)
     },
-    onSuccess: (data) => {
-      setAuth(data.user, data.token)
-      navigate('/')
+    onSuccess: () => {
+      toast.success('Benvenuto! Il tuo account è pronto. Ora accedi.')
+      setTimeout(() => navigate('/login'), 2000)
     },
     onError: (error: any) => {
       const data = error.response?.data;
@@ -48,6 +48,10 @@ export default function Register() {
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    if (formData.password !== confirmPassword) {
+      setErrorMessage('Le password non corrispondono')
+      return
+    }
     registerMutation.mutate(formData)
   }
 
@@ -231,6 +235,30 @@ export default function Register() {
                     className="pl-9"
                     value={formData.password}
                     onChange={handleChange}
+                    required
+                  />
+                </div>
+              </div>
+
+              {/* Conferma password */}
+              <div className="space-y-1.5">
+                <Label htmlFor="confirmPassword">Conferma password</Label>
+                <div className="relative group">
+                  <Lock
+                    size={15}
+                    className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground
+                               transition-colors duration-200 group-focus-within:text-primary z-10 pointer-events-none"
+                  />
+                  <Input
+                    id="confirmPassword"
+                    type="password"
+                    placeholder="••••••••"
+                    className="pl-9"
+                    value={confirmPassword}
+                    onChange={(e) => {
+                      setConfirmPassword(e.target.value)
+                      setErrorMessage(null)
+                    }}
                     required
                   />
                 </div>

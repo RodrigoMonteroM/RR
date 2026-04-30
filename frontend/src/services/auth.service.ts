@@ -8,10 +8,17 @@ export const authService = {
   },
 
   register: async (formData: RegisterFormData): Promise<AuthResponse> => {
-
     const { data } = await api.post<AuthResponse>('/auth/register', formData);
     return data;
   },
 
+  forgotPassword: async (email: string): Promise<{ message: string }> => {
+    const { data } = await api.post<{ message: string }>('/auth/forgot-password', { email });
+    return data;
+  },
 
+  resetPassword: async (token: string, password: string): Promise<{ message: string }> => {
+    const { data } = await api.post<{ message: string }>('/auth/reset-password', { token, password });
+    return data;
+  },
 };

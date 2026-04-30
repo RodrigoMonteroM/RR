@@ -37,7 +37,7 @@ export const userRepository = {
         }),
 
 
-    searchUserByEmailorNickname: (nickname: string, email: string) => {
+    searchUserByEmailorNickname: (email: string, nickname: string) => {
         return prisma.user.findFirst({
             where: {
                 OR: [

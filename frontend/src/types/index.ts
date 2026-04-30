@@ -13,7 +13,8 @@ export interface Box {
   id: string;
   name: string;
   description?: string;
-  coupleId: string;
+  coupleId: string | null;
+  createdByUserId: string;
   createdAt: string;
 }
 

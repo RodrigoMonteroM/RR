@@ -1,4 +1,4 @@
-import { Search, Plus, Pencil, Trash2, Heart, LogOut } from 'lucide-react'
+import { Search, Plus, Heart, LogOut, Package, Loader2, Pencil, Trash2, Eye, EyeOff } from 'lucide-react'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -12,20 +12,11 @@ import { User } from '@/types'
 import { userService } from '@/services/user.service'
 import { useAuth } from '@/hooks/useAuth'
 import { useNavigate } from 'react-router-dom'
-
-// ── Types ──────────────────────────────────────────────────────────────────
-interface Category {
-  id: string
-  name: string
-  items: string[]
-}
-
-// ── Mock data ──────────────────────────────────────────────────────────────
-const MOCK_CATEGORIES: Category[] = [
-  { id: 'c1', name: 'Viaggi', items: ['Parigi in primavera', 'Weekend a Roma'] },
-  { id: 'c2', name: 'Film', items: ['La La Land', 'Everything Everywhere'] },
-  { id: 'c3', name: 'Ristoranti', items: ['Trattoria da Mario', 'Sushi Zen'] },
-]
+import { useBoxes } from '@/hooks/useBoxes'
+import CreateBoxModal from '@/components/CreateBoxModal'
+import EditBoxModal from '@/components/EditBoxModal'
+import ConfirmDialog from '@/components/ConfirmDialog'
+import { toast } from 'sonner'
 
 export default function HomePage() {
   const { user } = useAuthStore();
@@ -33,8 +24,12 @@ export default function HomePage() {
   const debouncedSearchQuery = useDebounce(searchQuery, 500);
   const [searchResults, setSearchResults] = useState<User[]>([]);
   const [isSearching, setIsSearching] = useState(false);
+  const [showCreateBox, setShowCreateBox] = useState(false);
+  const [editingBox, setEditingBox] = useState<typeof import('@/types').Box | null>(null);
+  const [deletingBox, setDeletingBox] = useState<typeof import('@/types').Box | null>(null);
   const { logout } = useAuth();
   const navigate = useNavigate();
+  const { boxes, isLoading: boxesLoading, deleteBox, changeVisibility } = useBoxes();
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -61,6 +56,26 @@ export default function HomePage() {
   const handleLogout = () => {
     logout();
     navigate('/login');
+  }
+
+  const handleDeleteBox = async () => {
+    if (!deletingBox) return
+    try {
+      await deleteBox(deletingBox.id)
+      toast.success('Box eliminato')
+      setDeletingBox(null)
+    } catch {
+      toast.error('Errore nell\'eliminazione del box')
+    }
+  }
+
+  const handleToggleVisibility = async (boxId: string) => {
+    try {
+      await changeVisibility(boxId)
+      toast.success('Visibilità aggiornata')
+    } catch {
+      toast.error('Errore nel cambiare la visibilità')
+    }
   }
 
   const userInitials = user?.name
@@ -157,55 +172,98 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* ── Categories ──────────────────────────────────────────────── */}
+          {/* ── Boxes ───────────────────────────────────────────────────── */}
           <div className="card-base card-hover px-6 py-5 animate-fade-up-1">
             <SectionHeader
-              title="Le mie Categorie"
+              title="Le mie Boxes"
               action={
                 <Button
                   size="sm"
                   variant="outline"
                   className="text-xs border-primary/40 text-primary hover:bg-primary/5 hover:border-primary/60 transition-all duration-200"
+                  onClick={() => setShowCreateBox(true)}
                 >
                   <Plus size={12} className="mr-1" />
-                  Crea Categoria
+                  Crea Box
                 </Button>
               }
             />
 
-            {/* Category list */}
-            <div className="space-y-2.5">
-              {MOCK_CATEGORIES.map(cat => (
-                <div
-                  key={cat.id}
-                  className="border border-border/50 rounded-xl p-4 transition-all duration-200 hover:border-primary/30 hover:bg-secondary/20 group"
-                >
-                  <div className="flex items-center gap-2 mb-3">
-                    <span className="font-semibold text-sm text-foreground flex-1">{cat.name}</span>
-                    <button className="p-1.5 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors duration-200 opacity-0 group-hover:opacity-100">
-                      <Pencil size={12} />
-                    </button>
-                    <button className="p-1.5 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors duration-200 opacity-0 group-hover:opacity-100">
-                      <Trash2 size={12} />
-                    </button>
-                  </div>
+            {/* Loading */}
+            {boxesLoading && (
+              <div className="flex items-center justify-center py-10">
+                <Loader2 size={24} className="text-muted-foreground animate-spin" />
+              </div>
+            )}
 
-                  {cat.items.length > 0 ? (
-                    <ul className="flex flex-wrap gap-1.5">
-                      {cat.items.map((item, i) => (
-                        <li key={i}>
-                          <span className="inline-flex items-center text-xs px-2.5 py-0.5 rounded-full bg-secondary border border-border/60 text-foreground/70 hover:border-primary/40 hover:text-foreground transition-colors duration-150 cursor-default">
-                            {item}
-                          </span>
-                        </li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <p className="text-xs text-muted-foreground/50 italic">Nessun elemento</p>
-                  )}
-                </div>
-              ))}
-            </div>
+            {/* Empty state */}
+            {!boxesLoading && boxes.length === 0 && (
+              <div className="text-center py-10">
+                <Package size={32} className="mx-auto mb-3 text-muted-foreground opacity-30" />
+                <p className="text-sm text-muted-foreground mb-1">Nessun box creato</p>
+                <p className="text-xs text-muted-foreground/60">
+                  Crea il tuo primo box per iniziare a raccogliere ricordi
+                </p>
+              </div>
+            )}
+
+            {/* Box list */}
+            {!boxesLoading && boxes.length > 0 && (
+              <div className="space-y-2.5">
+                {boxes.map(box => (
+                  <div
+                    key={box.id}
+                    className="border border-border/50 rounded-xl p-4 transition-all duration-200 hover:border-primary/30 hover:bg-secondary/20 group"
+                  >
+                    <div className="flex items-center gap-2 mb-2">
+                      <div
+                        className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0 cursor-pointer"
+                        onClick={() => navigate(`/boxes/${box.id}`)}
+                      >
+                        <Package size={14} className="text-primary" />
+                      </div>
+                      <span
+                        className="font-semibold text-sm text-foreground flex-1 cursor-pointer"
+                        onClick={() => navigate(`/boxes/${box.id}`)}
+                      >
+                        {box.name}
+                      </span>
+
+                      {/* Action buttons - visible on hover */}
+                      <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button
+                          onClick={() => handleToggleVisibility(box.id)}
+                          className="p-1.5 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors duration-200"
+                          title={box.coupleId ? 'Rendi personale' : 'Condividi con la coppia'}
+                        >
+                          {box.coupleId ? <EyeOff size={12} /> : <Eye size={12} />}
+                        </button>
+                        <button
+                          onClick={() => setEditingBox(box)}
+                          className="p-1.5 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors duration-200"
+                          title="Modifica"
+                        >
+                          <Pencil size={12} />
+                        </button>
+                        <button
+                          onClick={() => setDeletingBox(box)}
+                          className="p-1.5 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors duration-200"
+                          title="Elimina"
+                        >
+                          <Trash2 size={12} />
+                        </button>
+                      </div>
+                    </div>
+
+                    {box.description && (
+                      <p className="text-xs text-muted-foreground ml-9 truncate">
+                        {box.description}
+                      </p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </main>
 
@@ -247,21 +305,12 @@ export default function HomePage() {
             </p>
             <div className="space-y-2.5">
               <div className="flex justify-between items-center">
-                <span className="text-xs text-muted-foreground">Categorie</span>
+                <span className="text-xs text-muted-foreground">Boxes</span>
                 <span
                   className="text-xs font-bold px-2 py-0.5 rounded-full text-white"
                   style={{ background: 'linear-gradient(135deg, #B4757A, #D4A5A8)' }}
                 >
-                  {MOCK_CATEGORIES.length}
-                </span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-xs text-muted-foreground">Elementi totali</span>
-                <span
-                  className="text-xs font-bold px-2 py-0.5 rounded-full text-white"
-                  style={{ background: 'linear-gradient(135deg, #B4757A, #D4A5A8)' }}
-                >
-                  {MOCK_CATEGORIES.reduce((sum, c) => sum + c.items.length, 0)}
+                  {boxes.length}
                 </span>
               </div>
             </div>
@@ -276,12 +325,35 @@ export default function HomePage() {
             <div className="relative z-10">
               <p className="font-display text-base italic font-normal opacity-95 mb-2">Suggerimento</p>
               <p className="text-xs leading-relaxed opacity-80 font-light">
-                Cerca il tuo partner per email e invia una richiesta per condividere le tue categorie.
+                Cerca il tuo partner per email e invia una richiesta per condividere le tue boxes.
               </p>
             </div>
           </div>
         </aside>
       </div>
+
+      {/* ── Create Box Modal ──────────────────────────────────────────────── */}
+      <CreateBoxModal open={showCreateBox} onClose={() => setShowCreateBox(false)} />
+
+      {/* ── Edit Box Modal ────────────────────────────────────────────────── */}
+      {editingBox && (
+        <EditBoxModal
+          open={!!editingBox}
+          onClose={() => setEditingBox(null)}
+          box={editingBox}
+        />
+      )}
+
+      {/* ── Delete Confirmation ───────────────────────────────────────────── */}
+      <ConfirmDialog
+        open={!!deletingBox}
+        onClose={() => setDeletingBox(null)}
+        onConfirm={handleDeleteBox}
+        title="Eliminar box"
+        message={deletingBox ? `¿Estás seguro de que querés eliminar "${deletingBox.name}"? Esta acción no se puede deshacer.` : ''}
+        confirmText="Eliminar"
+        variant="destructive"
+      />
     </div>
   )
 }

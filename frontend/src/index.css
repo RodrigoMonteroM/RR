@@ -89,3 +89,46 @@
     @apply transition-shadow duration-300 hover:shadow-[0_6px_32px_rgba(180,117,122,0.14),0_2px_6px_rgba(180,117,122,0.07)];
   }
 }
+
+/* ReactFlow dark mode overrides */
+.dark .react-flow__edge-path,
+.dark .react-flow__edge-interaction {
+  stroke: hsl(var(--muted-foreground)) !important;
+}
+
+.dark .react-flow__edge-path:hover,
+.dark .react-flow__edge.selected .react-flow__edge-path {
+  stroke: hsl(var(--primary)) !important;
+}
+
+/* Light mode — make sure edges are visible */
+.react-flow__edge-path {
+  stroke: hsl(var(--muted-foreground));
+}
+
+.react-flow__edge-path:hover,
+.react-flow__edge.selected .react-flow__edge-path {
+  stroke: hsl(var(--primary));
+}
+
+.dark .react-flow__controls-button {
+  background: hsl(var(--card));
+  border-color: hsl(var(--border));
+  fill: hsl(var(--foreground));
+}
+
+.dark .react-flow__controls-button:hover {
+  background: hsl(var(--muted));
+}
+
+.dark .react-flow__controls-button svg {
+  fill: hsl(var(--foreground));
+}
+
+.dark .react-flow__node-default,
+.dark .react-flow__node-input,
+.dark .react-flow__node-output {
+  background: hsl(var(--card));
+  border-color: hsl(var(--border));
+  color: hsl(var(--foreground));
+}

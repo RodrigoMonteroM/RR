@@ -27,6 +27,11 @@ export function useBoxes() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: BOXES_KEY }),
   });
 
+  const visibilityMutation = useMutation({
+    mutationFn: boxService.changeVisibility,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: BOXES_KEY }),
+  });
+
   return {
     boxes: query.data ?? [],
     isLoading: query.isLoading,
@@ -34,6 +39,7 @@ export function useBoxes() {
     createBox: createMutation.mutateAsync,
     updateBox: updateMutation.mutateAsync,
     deleteBox: deleteMutation.mutateAsync,
+    changeVisibility: visibilityMutation.mutateAsync,
   };
 }
 

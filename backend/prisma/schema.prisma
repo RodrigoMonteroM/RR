@@ -16,10 +16,12 @@ model User {
   resetToken         String?   @unique
   resetTokenExpirity DateTime?
   avatarUrl          String?
+  coupleId           String?
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
 
-  couples          CoupleUser[]
+  couple           Couple?         @relation(fields: [coupleId], references: [id])
+  boxes            Box[]
   items            Item[]
   sentRequests     CoupleRequest[] @relation("SentRequests")
   receivedRequests CoupleRequest[] @relation("ReceivedRequests")
@@ -29,30 +31,21 @@ model Couple {
   id        String   @id @default(uuid())
   createdAt DateTime @default(now())
 
-  users CoupleUser[]
+  users User[]
   boxes Box[]
 }
 
-model CoupleUser {
-  id       String @id @default(uuid())
-  userId   String
-  coupleId String
-
-  user   User   @relation(fields: [userId], references: [id])
-  couple Couple @relation(fields: [coupleId], references: [id])
-
-  @@unique([userId, coupleId])
-}
-
 model Box {
-  id          String   @id @default(uuid())
-  name        String
-  description String?
-  coupleId    String
-  createdAt   DateTime @default(now())
+  id              String   @id @default(uuid())
+  name            String
+  description     String?
+  coupleId        String?
+  createdByUserId String
+  createdAt       DateTime @default(now())
 
-  couple Couple @relation(fields: [coupleId], references: [id])
-  items  Item[]
+  couple   Couple? @relation(fields: [coupleId], references: [id])
+  createdBy User   @relation(fields: [createdByUserId], references: [id])
+  items    Item[]
 }
 
 model Item {

@@ -109,18 +109,22 @@ box/
 
 ```prisma
 model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  password  String
-  nickname  String   @unique
-  firstName String
-  lastName  String
-  avatarUrl String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id                 String   @id @default(uuid())
+  email              String   @unique
+  password           String
+  nickname           String   @unique
+  firstName          String
+  lastName           String
+  avatarUrl          String?
+  coupleId           String?
+  resetToken         String?   @unique
+  resetTokenExpirity DateTime?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
 
-  couples CoupleUser[]
-  items   Item[]
+  couple           Couple?         @relation(fields: [coupleId], references: [id])
+  boxes            Box[]
+  items            Item[]
   sentRequests     CoupleRequest[] @relation("SentRequests")
   receivedRequests CoupleRequest[] @relation("ReceivedRequests")
 }
@@ -129,30 +133,21 @@ model Couple {
   id        String   @id @default(uuid())
   createdAt DateTime @default(now())
 
-  users CoupleUser[]
+  users User[]
   boxes Box[]
 }
 
-model CoupleUser {
-  id       String @id @default(uuid())
-  userId   String
-  coupleId String
-
-  user   User   @relation(fields: [userId], references: [id])
-  couple Couple @relation(fields: [coupleId], references: [id])
-
-  @@unique([userId, coupleId])
-}
-
 model Box {
-  id          String   @id @default(uuid())
-  name        String
-  description String?
-  coupleId    String
-  createdAt   DateTime @default(now())
+  id              String   @id @default(uuid())
+  name            String
+  description     String?
+  coupleId        String?
+  createdByUserId String
+  createdAt       DateTime @default(now())
 
-  couple Couple @relation(fields: [coupleId], references: [id])
-  items  Item[]
+  couple   Couple? @relation(fields: [coupleId], references: [id])
+  createdBy User   @relation(fields: [createdByUserId], references: [id])
+  items    Item[]
 }
 
 model Item {
@@ -167,14 +162,14 @@ model Item {
 }
 
 model CoupleRequest {
-  id          String   @id @default(uuid())
-  senderId    String
-  receiverId  String
-  status      String   @default("PENDING")
-  createdAt   DateTime @default(now())
+  id         String   @id @default(uuid())
+  senderId   String
+  receiverId String
+  status     String   @default("PENDING")
+  createdAt  DateTime @default(now())
 
-  sender      User     @relation("SentRequests", fields: [senderId], references: [id])
-  receiver    User     @relation("ReceivedRequests", fields: [receiverId], references: [id])
+  sender   User @relation("SentRequests", fields: [senderId], references: [id])
+  receiver User @relation("ReceivedRequests", fields: [receiverId], references: [id])
 
   @@unique([senderId, receiverId])
 }
@@ -201,6 +196,7 @@ Base URL: `http://localhost:3000/api`
 | POST | `/boxes` | `{ name, description? }` | `Box` | Sí |
 | PUT | `/boxes/:id` | `{ name?, description? }` | `Box` | Sí |
 | DELETE | `/boxes/:id` | — | `{ success: true }` | Sí |
+| PUT | `/boxes/:id/visibility` | — | `Box` | Sí |
 
 ### Items
 | Método | Ruta | Body | Respuesta | Auth |
