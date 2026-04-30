@@ -9,6 +9,9 @@ COPY . .
 
 RUN bunx prisma generate
 
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+USER appuser
+
 EXPOSE 3000
 
 CMD ["bun", "run", "src/index.ts"]

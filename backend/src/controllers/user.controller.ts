@@ -14,7 +14,7 @@ export default class UserController {
                 return res.status(404).json({ message: "Utente non trovato" });
             }
 
-            const { password: _, ...userResponse } = user;
+            const { password: _, resetToken, resetTokenExpirity, email, coupleId, ...userResponse } = user;
             const response: ResponseMessage<typeof userResponse> = {
                 message: "Utente trovato con successo",
                 data: userResponse,

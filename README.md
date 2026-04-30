@@ -109,3 +109,29 @@ Base URL: `http://localhost:3000/api`
 | POST | `/boxes/:boxId/items` | Sí |
 | PUT | `/items/:id` | Sí |
 | DELETE | `/items/:id` | Sí |
+
+## Seguridad
+
+Auditoría completa realizada el 30 de abril de 2026. Ver [SECURITY.md](SECURITY.md) para el reporte detallado.
+
+### Fixes aplicados (Fase 1 ✅)
+
+| Fix | Descripción |
+|-----|-------------|
+| C1 | JWT_SECRET validado al arranque (mínimo 32 chars) |
+| C3 | Endpoint público filtra datos sensibles (email, resetToken, coupleId) |
+| C5 | Helmet — security headers en Express |
+| C6 | Content-Security-Policy en frontend |
+| C7 | MySQL ya no expuesto al host |
+| C8 | Contenedores corren como usuario no-root |
+| H6 | CORS configurable vía FRONTEND_URL |
+
+### Pendiente
+
+- **Fase 2:** Rate limiting, refresh tokens, .dockerignore, versiones Docker pineadas
+- **Fase 3:** Pre-producción (17 hallazgos medios)
+- **Fase 4:** Hardening continuo
+
+### Reportar vulnerabilidades
+
+No abras issues públicos para temas de seguridad. Contactá por email. Ver [SECURITY.md](SECURITY.md#reportar-una-vulnerabilidad).

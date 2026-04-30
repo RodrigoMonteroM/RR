@@ -6,12 +6,16 @@ import boxRouter from "@/routes/box.router";
 import { requestLogger } from "@/middlewares/requestLogger";
 import { logger } from "@/lib/logger";
 import cors from "cors";
+import helmet from "helmet";
 
 const app = express();
 const port = process.env.PORT || 3000;
 
+app.use(helmet());
+
+const allowedOrigins = (process.env.FRONTEND_URL || "http://localhost:5173").split(",");
 app.use(cors({
-    origin: "http://localhost:5173",
+    origin: allowedOrigins,
     credentials: true
 }));
 

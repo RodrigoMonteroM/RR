@@ -5,7 +5,11 @@ export interface JwtPayload {
     userId: string;
 }
 
-const secret = new TextEncoder().encode(process.env.JWT_SECRET!);
+const jwtSecret = process.env.JWT_SECRET;
+if (!jwtSecret || jwtSecret.length < 32) {
+    throw new Error("JWT_SECRET must be set and at least 32 characters long");
+}
+const secret = new TextEncoder().encode(jwtSecret);
 
 export const signToken = async (payload: JwtPayload): Promise<string> => {
     return await new SignJWT({ userId: payload.userId })
