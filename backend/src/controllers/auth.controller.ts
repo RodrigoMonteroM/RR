@@ -113,7 +113,7 @@ export const resetPassword = async (req: Request, res: Response) => {
         }
 
         await userRepository.update(user.id, {
-            password,
+            password, // password is already hashed by the middleware
             resetToken: null,
             resetTokenExpirity: null,
         });

@@ -8,7 +8,9 @@ RUN npm install
 
 COPY . .
 
-RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup \
+    && chown -R appuser:appgroup /app
+
 USER appuser
 
 EXPOSE 5173

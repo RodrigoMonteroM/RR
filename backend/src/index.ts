@@ -7,17 +7,19 @@ import { requestLogger } from "@/middlewares/requestLogger";
 import { logger } from "@/lib/logger";
 import cors from "cors";
 import helmet from "helmet";
+import {env} from '@/lib/env';
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = env.PORT || 3000;
 
-app.use(helmet());
-
-const allowedOrigins = (process.env.FRONTEND_URL || "http://localhost:5173").split(",");
+const allowedOrigins = (env.FRONTEND_URL || "http://localhost:5173").split(",");
 app.use(cors({
     origin: allowedOrigins,
     credentials: true
 }));
+app.options("*", cors());
+
+app.use(helmet());
 
 app.use(express.json());
 app.use(requestLogger);

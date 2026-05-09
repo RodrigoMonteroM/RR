@@ -7,9 +7,11 @@ RUN bun install
 
 COPY . .
 
-RUN bunx prisma generate
+RUN DATABASE_URL="mysql://dummy:dummy@localhost:3306/dummy" bunx prisma generate
 
-RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+RUN groupadd -r appgroup && useradd -r -g appgroup appuser \
+    && chown -R appuser:appgroup /app
+
 USER appuser
 
 EXPOSE 3000

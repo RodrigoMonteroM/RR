@@ -7,18 +7,18 @@ datasource db {
 }
 
 model User {
-  id                 String   @id @default(uuid())
-  email              String   @unique
+  id                 String    @id @default(uuid())
+  email              String    @unique
   password           String
-  nickname           String   @unique
+  nickname           String    @unique
   firstName          String
   lastName           String
   resetToken         String?   @unique
   resetTokenExpirity DateTime?
   avatarUrl          String?
   coupleId           String?
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
 
   couple           Couple?         @relation(fields: [coupleId], references: [id])
   boxes            Box[]
@@ -43,9 +43,9 @@ model Box {
   createdByUserId String
   createdAt       DateTime @default(now())
 
-  couple   Couple? @relation(fields: [coupleId], references: [id])
-  createdBy User   @relation(fields: [createdByUserId], references: [id])
-  items    Item[]
+  couple    Couple? @relation(fields: [coupleId], references: [id])
+  createdBy User    @relation(fields: [createdByUserId], references: [id])
+  items     Item[]
 }
 
 model Item {
@@ -55,8 +55,9 @@ model Item {
   createdByUserId String
   createdAt       DateTime @default(now())
 
-  box       Box  @relation(fields: [boxId], references: [id], onDelete: Cascade)
-  createdBy User @relation(fields: [createdByUserId], references: [id])
+  box       Box     @relation(fields: [boxId], references: [id], onDelete: Cascade)
+  createdBy User    @relation(fields: [createdByUserId], references: [id])
+  completed Boolean @default(false)
 }
 
 model CoupleRequest {

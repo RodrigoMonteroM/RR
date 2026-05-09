@@ -1,11 +1,12 @@
 // bun add jose
 import { SignJWT, jwtVerify } from "jose";
+import {env} from '@/lib/env';
 
 export interface JwtPayload {
     userId: string;
 }
 
-const jwtSecret = process.env.JWT_SECRET;
+const jwtSecret = env.JWT_SECRET;
 if (!jwtSecret || jwtSecret.length < 32) {
     throw new Error("JWT_SECRET must be set and at least 32 characters long");
 }
