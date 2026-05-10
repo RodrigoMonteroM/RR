@@ -10,11 +10,9 @@ COPY . .
 # Genera Prisma Client con un dummy URL SQLite
 RUN DATABASE_URL="file:./dev.db" bunx prisma generate
 
-# Crea directory per il database SQLite e assegna permessi
-RUN mkdir -p /app/data && chown -R appuser:appgroup /app/data
-
-RUN groupadd -r appgroup && useradd -r -g appgroup appuser \
-    && chown -R appuser:appgroup /app
+# Crea utente/gruppo e directory per il database SQLite
+RUN groupadd -r appgroup && useradd -r -g appgroup appuser
+RUN mkdir -p /app/data && chown -R appuser:appgroup /app /app/data
 
 USER appuser
 
