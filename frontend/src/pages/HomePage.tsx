@@ -113,7 +113,7 @@ export default function HomePage() {
       </nav>
 
       {/* ── Body ──────────────────────────────────────────────────────────── */}
-      <div className="max-w-5xl mx-auto px-6 py-8 flex flex-col lg:flex-row gap-8">
+        <div className="max-w-5xl mx-auto px-6 md:px-8 lg:px-6 py-8 flex flex-col lg:flex-row gap-8">
 
         {/* ── Main content ────────────────────────────────────────────────── */}
         <main className="flex-1 space-y-5 min-w-0">
@@ -230,7 +230,7 @@ export default function HomePage() {
                       </span>
 
                       {/* Action buttons - always visible on mobile, hover on desktop */}
-                      <div className="flex items-center gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
+                      <div className="flex items-center gap-1 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
                         <button
                           onClick={() => handleToggleVisibility(box.id)}
                           className="p-1.5 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors duration-200"

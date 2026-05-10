@@ -69,7 +69,7 @@ export default function Register() {
 
       {/* ── Left panel ── */}
       <div
-        className="hidden md:flex md:w-2/5 flex-col justify-between px-12 py-10 relative overflow-hidden"
+        className="hidden md:flex md:w-2/5 flex-col justify-between md:px-8 lg:px-12 py-10 relative overflow-hidden"
         style={{ background: 'linear-gradient(150deg, #9e5a60 0%, #B4757A 45%, #cfa0a4 100%)' }}
       >
         {/* Dot grid overlay */}
@@ -94,7 +94,7 @@ export default function Register() {
           </svg>
 
           <div className="text-white space-y-3">
-            <p className="font-display text-[2.6rem] italic leading-[1.15] font-normal">
+            <p className="font-display md:text-[2rem] lg:text-[2.4rem] xl:text-[2.6rem] italic leading-[1.15] font-normal">
               La vostra storia<br />inizia qui.
             </p>
             <p className="text-sm text-white/60 leading-relaxed max-w-[200px] font-light">

@@ -65,13 +65,13 @@ export function ItemCard({ item, onUpdate, onDelete, onToggle }: ItemCardProps) 
           </p>
 
           <div className="flex items-center justify-between mt-2">
-            <div className="flex items-center gap-2 text-[11px] text-muted-foreground/70">
+            <div className="flex items-center gap-2 text-[11px] md:text-xs text-muted-foreground/70">
               <span className="font-medium text-primary/80">@{item.createdBy.nickname}</span>
               <span>·</span>
               <span>{date}</span>
             </div>
 
-            <div className="flex items-center gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
+            <div className="flex items-center gap-1 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
               <button
                 onClick={() => setShowEdit(true)}
                 className="p-1.5 rounded-md text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"

@@ -72,7 +72,7 @@ export default function BoxDetail() {
       </nav>
 
       {/* Content */}
-      <div className="max-w-3xl mx-auto px-6 py-8 space-y-6">
+      <div className="max-w-3xl mx-auto px-6 md:px-8 lg:px-6 py-8 space-y-6">
         {/* Box info card */}
         <div className="card-base px-6 py-6 animate-fade-up">
           <div className="flex items-start justify-between mb-4">
