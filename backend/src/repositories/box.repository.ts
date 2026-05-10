@@ -5,7 +5,7 @@ export const boxRepository = {
     findById: (id: string) =>
         prisma.box.findUnique({
             where: { id },
-            include: { items: true }
+            include: { items: { include: { createdBy: { select: { id: true, nickname: true } } } } }
         }),
 
     findByUserId: (userId: string) =>
