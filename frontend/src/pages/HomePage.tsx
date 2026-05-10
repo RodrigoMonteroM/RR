@@ -78,8 +78,8 @@ export default function HomePage() {
     }
   }
 
-  const userInitials = user?.name
-    ? user.name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()
+  const userInitials = user?.nickname
+    ? user.nickname.slice(0, 2).toUpperCase()
     : '??'
 
   return (
@@ -98,7 +98,7 @@ export default function HomePage() {
             <div className="flex items-center gap-2.5">
               <Avatar initials={userInitials} size="sm" />
               <span className="text-sm font-medium text-foreground hidden sm:block">
-                {user?.name ?? 'Utente'}
+                {user?.nickname ?? 'Utente'}
               </span>
             </div>
             <button
@@ -280,7 +280,7 @@ export default function HomePage() {
                 {userInitials}
               </div>
               <div>
-                <p className="font-semibold text-foreground text-sm">{user?.name ?? 'Utente'}</p>
+                <p className="font-semibold text-foreground text-sm">{user?.nickname ?? 'Utente'}</p>
                 <p className="text-xs text-muted-foreground mt-0.5">{user?.email ?? ''}</p>
               </div>
               <div className="w-full border-t border-border/60 pt-3">
