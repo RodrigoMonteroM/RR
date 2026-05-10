@@ -4,3 +4,10 @@ dist/
 *.log
 .DS_Store
 Thumbs.db
+
+# IDE / Agent
+.idea/
+.opencode/
+
+# Planning docs
+backend-steady-hickey.md
