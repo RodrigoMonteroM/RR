@@ -31,12 +31,8 @@ export class AuthController {
         logger.success(`User registered → ${user.id}`);
 
         const token = await signToken({userId: user.id});
-        const response: ResponseMessage<typeof user> = {
-            message: "Utente registrato con successo",
-            data: user,
-        };
 
-        return res.status(201).json({...response, token});
+        return res.status(201).json({user, token});
 
     }
 

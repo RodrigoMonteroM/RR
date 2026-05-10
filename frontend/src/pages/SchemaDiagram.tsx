@@ -21,8 +21,8 @@ const nodeTypes: NodeTypes = {
 
 export default function SchemaDiagram() {
   const { theme, toggleTheme } = useTheme()
-  const [nodes, setNodes, onNodesChange] = useNodesState(schemaNodes)
-  const [edges, setEdges, onEdgesChange] = useEdgesState(schemaEdges)
+  const [nodes, , onNodesChange] = useNodesState(schemaNodes)
+  const [edges, , onEdgesChange] = useEdgesState(schemaEdges)
 
   const miniMapNodeColor = useCallback((node: any) => {
     const label = node.data?.label ?? ''

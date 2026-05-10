@@ -1,3 +1,4 @@
+import "express-async-errors";
 import express from "express";
 import routerHealthCheck from "@/routes/healtCheck";
 import authRouter from "@/routes/auth.router";
@@ -14,7 +15,9 @@ import {errorHandler} from "@/middlewares/errorHandler";
 const app = express();
 const port = env.PORT || 3000;
 
-const allowedOrigins = (env.FRONTEND_URL || "http://localhost:5173").split(",");
+app.set("trust proxy", 1);
+
+const allowedOrigins = (env.FRONTEND_URL || "http://localhost:5173").split(",").map(s => s.trim());
 app.use(cors({
     origin: allowedOrigins,
     credentials: true
@@ -23,7 +26,7 @@ app.options("*", cors());
 
 app.use(helmet());
 
-app.use(express.json());
+app.use(express.json({ limit: "100kb" }));
 app.use(requestLogger);
 
 app.use("/api", routerHealthCheck);

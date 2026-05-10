@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { createPortal } from 'react-dom'
 import { X, Package } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -40,16 +41,16 @@ export default function CreateBoxModal({ open, onClose }: CreateBoxModalProps) {
 
   if (!open) return null
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
+  return createPortal(
+    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto p-4">
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200"
+        className="absolute inset-0 bg-black/40 backdrop-blur-sm animate-in fade-in duration-200"
         onClick={onClose}
       />
 
       {/* Modal */}
-      <div className="relative z-10 w-full max-w-md mx-4 bg-card rounded-2xl border border-border/50 shadow-[0_8px_40px_rgba(180,117,122,0.15)] animate-in zoom-in-95 fade-in duration-200">
+      <div className="relative z-10 w-full max-w-md my-auto bg-card rounded-2xl border border-border/50 shadow-[0_8px_40px_rgba(180,117,122,0.15)] animate-in zoom-in-95 fade-in duration-200 max-h-[calc(100vh-2rem)] overflow-y-auto">
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-border/50">
           <div className="flex items-center gap-2.5">
@@ -110,6 +111,7 @@ export default function CreateBoxModal({ open, onClose }: CreateBoxModalProps) {
           </div>
         </form>
       </div>
-    </div>
+    </div>,
+    document.body
   )
 }

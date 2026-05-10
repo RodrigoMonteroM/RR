@@ -2,12 +2,27 @@ node_modules/
 dist/
 .env
 *.log
+logs_*.txt
 .DS_Store
 Thumbs.db
 
 # IDE / Agent
 .idea/
 .opencode/
+.agents/
+.claude/
+skills-lock.json
+*.skills-lock.json
+.cursor/
+.vscode/
+
+# SQLite DB files
+*.db
+*.db-journal
+backend/data/
+
+# Build output
+build/
 
 # Planning docs
 backend-steady-hickey.md

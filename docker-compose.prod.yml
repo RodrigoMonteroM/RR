@@ -1,0 +1,37 @@
+services:
+  backend:
+    build: ./backend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    volumes:
+      - sqlite_data:/app/data
+    env_file:
+      - ./backend/.env
+    environment:
+      DATABASE_URL: "file:/app/data/rrapp.db"
+      NODE_ENV: production
+      PORT: 3000
+    command: sh -c "bunx prisma db push --accept-data-loss && bun run start"
+    healthcheck:
+      test: ["CMD", "bun", "-e", "fetch('http://localhost:3000/api/health').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.prod
+      args:
+        VITE_API_URL: /api
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+
+volumes:
+  sqlite_data:
