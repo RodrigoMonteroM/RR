@@ -8,7 +8,7 @@ import { Avatar } from '@/components/Avatar'
 import { SectionHeader } from '@/components/SectionHeader'
 import { useEffect, useState } from 'react'
 import { useDebounce } from '@/hooks/useDebounce'
-import { User } from '@/types'
+import { User, Box } from '@/types'
 import { userService } from '@/services/user.service'
 import { useAuth } from '@/hooks/useAuth'
 import { useNavigate } from 'react-router-dom'
@@ -25,8 +25,8 @@ export default function HomePage() {
   const [searchResults, setSearchResults] = useState<User[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [showCreateBox, setShowCreateBox] = useState(false);
-  const [editingBox, setEditingBox] = useState<typeof import('@/types').Box | null>(null);
-  const [deletingBox, setDeletingBox] = useState<typeof import('@/types').Box | null>(null);
+  const [editingBox, setEditingBox] = useState<Box | null>(null);
+  const [deletingBox, setDeletingBox] = useState<Box | null>(null);
   const { logout } = useAuth();
   const navigate = useNavigate();
   const { boxes, isLoading: boxesLoading, deleteBox, changeVisibility } = useBoxes();
