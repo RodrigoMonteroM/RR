@@ -1,23 +1,26 @@
 import { prisma } from "@/lib/prisma";
 import { CreateUserInput } from "@/schema/userSchema";
-
-
+import { Prisma } from "@prisma/client";
 
 export const userRepository = {
-    findById: (id: string) =>
-        prisma.user.findUnique({ where: { id } }),
+    findById: function(id: string) {
+        return prisma.user.findUnique({ where: { id } });
+    },
 
-    findByEmail: (email: string) =>
-        prisma.user.findUnique({ where: { email } }),
+    findByEmail: function(email: string) {
+        return prisma.user.findUnique({ where: { email } });
+    },
 
-    findByNickname: (nickname: string) =>
-        prisma.user.findUnique({ where: { nickname } }),
+    findByNickname: function(nickname: string) {
+        return prisma.user.findUnique({ where: { nickname } });
+    },
 
-    create: (data: CreateUserInput) =>
-        prisma.user.create({ data }),
+    create: function(data: CreateUserInput) {
+        return prisma.user.create({ data });
+    },
 
-    searchByQuery: (query: string, currentUserId: string) =>
-        prisma.user.findMany({
+    searchByQuery: function(query: string, currentUserId: string) {
+        return prisma.user.findMany({
             where: {
                 OR: [
                     { nickname: { contains: query } },
@@ -33,11 +36,11 @@ export const userRepository = {
                 firstName: true,
                 lastName: true,
                 avatarUrl: true,
-            }
-        }),
+            },
+        });
+    },
 
-
-    searchUserByEmailorNickname: (email: string, nickname: string) => {
+    searchUserByEmailOrNickname: function(email: string, nickname: string) {
         return prisma.user.findFirst({
             where: {
                 OR: [
@@ -48,12 +51,19 @@ export const userRepository = {
         });
     },
 
-    update: (id: string, data: Record<string, unknown>) => {
+    update: function(id: string, data: Prisma.UserUpdateInput) {
         return prisma.user.update({ where: { id }, data });
     },
 
-    findByResetToken: (token: string) => {
+    findByResetToken: function(token: string) {
         return prisma.user.findFirst({ where: { resetToken: token } });
-    }
+    },
 
+    getCoupleIdByUserId: async function (id: string) {
+        const user = await prisma.user.findUnique({
+            where: {id},
+            select: {coupleId: true},
+        });
+        return user?.coupleId ?? null;
+    }
 };

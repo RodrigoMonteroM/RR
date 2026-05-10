@@ -1,131 +1,100 @@
-import { prisma } from "@/lib/prisma";
-import { logger } from "@/lib/logger";
 import { boxRepository } from "@/repositories/box.repository";
 import { CreateBoxInput, UpdateBoxInput } from "@/schema/boxSchema";
+import { userRepository } from "@/repositories/user.repository";
+import { NotFoundError, ForbiddenError } from "@/lib/errors";
 
 export class BoxService {
-    private static async getCoupleId(userId: string): Promise<string | null> {
-        const user = await prisma.user.findUnique({
-            where: { id: userId },
-            select: { coupleId: true }
-        });
-        return user?.coupleId ?? null;
+
+    private static authorizeBoxAccess(
+        box: { createdByUserId: string; coupleId: string | null },
+        userId: string,
+        coupleId: string | null
+    ) {
+        const isOwner = box.createdByUserId === userId;
+        const isShared = coupleId && box.coupleId === coupleId;
+
+        if (!isOwner && !isShared) {
+            throw new ForbiddenError();
+        }
+    }
+
+    private static authorizeBoxOwner(box: { createdByUserId: string }, userId: string) {
+        if (box.createdByUserId !== userId) {
+            throw new ForbiddenError();
+        }
     }
 
     static async getBoxes(userId: string) {
-        try {
-            const coupleId = await this.getCoupleId(userId);
+        const coupleId = await userRepository.getCoupleIdByUserId(userId);
 
-            if (!coupleId) {
-                return await boxRepository.findPersonalBoxes(userId);
-            }
-
-            const [personal, shared] = await Promise.all([
-                boxRepository.findPersonalBoxes(userId),
-                boxRepository.findSharedBoxes(coupleId)
-            ]);
-
-            return [...personal, ...shared];
-        } catch (error) {
-            logger.error("getBoxes failed", error);
-            throw error;
+        if (!coupleId) {
+            return await boxRepository.findPersonalBoxes(userId);
         }
+
+        const [personal, shared] = await Promise.all([
+            boxRepository.findPersonalBoxes(userId),
+            boxRepository.findSharedBoxes(coupleId)
+        ]);
+
+        return [...personal, ...shared];
     }
 
     static async getBoxById(boxId: string, userId: string) {
-        try {
-            const coupleId = await this.getCoupleId(userId);
-            const box = await boxRepository.findById(boxId);
+        const coupleId = await userRepository.getCoupleIdByUserId(userId);
+        const box = await boxRepository.findById(boxId);
 
-            if (!box) throw new Error("Box not found");
+        if (!box) throw new NotFoundError("Box not found");
+        await this.authorizeBoxAccess(box, userId, coupleId);
 
-            const isOwner = box.createdByUserId === userId;
-            const isShared = coupleId && box.coupleId === coupleId;
-
-            if (!isOwner && !isShared) throw new Error("Box not found or not authorized");
-
-            return box;
-        } catch (error) {
-            logger.error("getBoxById failed", error);
-            throw error;
-        }
+        return box;
     }
 
     static async create(data: CreateBoxInput, userId: string) {
-        try {
-            const coupleId = await this.getCoupleId(userId);
+        const coupleId = await userRepository.getCoupleIdByUserId(userId);
 
-            return await boxRepository.create({
-                name: data.name,
-                description: data.description,
-                coupleId,
-                createdByUserId: userId
-            });
-        } catch (error) {
-            logger.error("create box failed", error);
-            throw error;
-        }
+        return await boxRepository.create({
+            name: data.name,
+            description: data.description,
+            coupleId,
+            createdByUserId: userId
+        });
     }
 
     static async update(boxId: string, data: UpdateBoxInput, userId: string) {
-        try {
-            const coupleId = await this.getCoupleId(userId);
-            const box = await boxRepository.findById(boxId);
+        const coupleId = await userRepository.getCoupleIdByUserId(userId);
+        const box = await boxRepository.findById(boxId);
 
-            if (!box) throw new Error("Box not found");
+        if (!box) throw new NotFoundError("Box not found");
+        await this.authorizeBoxAccess(box, userId, coupleId);
 
-            const isOwner = box.createdByUserId === userId;
-            const isShared = coupleId && box.coupleId === coupleId;
-
-            if (!isOwner && !isShared) throw new Error("Box not found or not authorized");
-
-            return await boxRepository.update(boxId, data);
-        } catch (error) {
-            logger.error("update box failed", error);
-            throw error;
-        }
+        return await boxRepository.update(boxId, data);
     }
 
     static async delete(boxId: string, userId: string) {
-        try {
-            const coupleId = await this.getCoupleId(userId);
-            const box = await boxRepository.findById(boxId);
+        const box = await boxRepository.findById(boxId);
 
-            if (!box) throw new Error("Box not found");
+        if (!box) throw new NotFoundError("Box not found");
+        await this.authorizeBoxOwner(box, userId);
 
-            const isOwner = box.createdByUserId === userId;
-
-            if (!isOwner) throw new Error("Box not found or not authorized");
-
-            return await boxRepository.delete(boxId);
-        } catch (error) {
-            logger.error("delete box failed", error);
-            throw error;
-        }
+        return await boxRepository.delete(boxId);
     }
 
     static async changeVisibility(boxId: string, userId: string) {
-        try {
-            const coupleId = await this.getCoupleId(userId);
-            const box = await boxRepository.findById(boxId);
+        const coupleId = await userRepository.getCoupleIdByUserId(userId);
+        const box = await boxRepository.findById(boxId);
 
-            if (!box) throw new Error("Box not found");
-            if (box.createdByUserId !== userId) throw new Error("Not authorized");
+        if (!box) throw new NotFoundError("Box not found");
+        if (box.createdByUserId !== userId) throw new ForbiddenError();
 
-            if (box.coupleId && coupleId && box.coupleId !== coupleId) {
-                throw new Error("Cannot change visibility of a box from another couple");
-            }
-
-            const newCoupleId = box.coupleId ? null : coupleId;
-            // se non hai una coppia non puoi condividere una box
-            if (!box.coupleId && !coupleId) {
-                throw new Error("You need a couple first to share a box");
-            }
-
-            return await boxRepository.updateCoupleId(boxId, newCoupleId);
-        } catch (error) {
-            logger.error("changeVisibility failed", error);
-            throw error;
+        if (box.coupleId && coupleId && box.coupleId !== coupleId) {
+            throw new ForbiddenError("Cannot change visibility of a box from another couple");
         }
+
+        const newCoupleId = box.coupleId ? null : coupleId;
+        if (!box.coupleId && !coupleId) {
+            throw new ForbiddenError("You need a couple first to share a box");
+        }
+
+        return await boxRepository.updateCoupleId(boxId, newCoupleId);
     }
 }

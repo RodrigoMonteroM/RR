@@ -2,37 +2,47 @@ import { prisma } from "@/lib/prisma";
 import { CreateBoxInput, UpdateBoxInput } from "@/schema/boxSchema";
 
 export const boxRepository = {
-    findById: (id: string) =>
-        prisma.box.findUnique({
+    findById: function(id: string) {
+        return prisma.box.findUnique({
             where: { id },
-            include: { items: { include: { createdBy: { select: { id: true, nickname: true } } } } }
-        }),
+            include: { items: { include: { createdBy: { select: { id: true, nickname: true } } } } },
+        });
+    },
 
-    findByUserId: (userId: string) =>
-        prisma.box.findMany({
+    findByUserId: function(userId: string) {
+        return prisma.box.findMany({
             where: { createdByUserId: userId },
-            orderBy: { createdAt: "desc" }
-        }),
+            orderBy: { createdAt: "desc" },
+        });
+    },
 
-    findPersonalBoxes: (userId: string) =>
-        prisma.box.findMany({
-            where: { createdByUserId: userId, coupleId: null }
-        }),
+    findPersonalBoxes: function(userId: string) {
+        return prisma.box.findMany({
+            where: { createdByUserId: userId, coupleId: null },
+        });
+    },
 
-    findSharedBoxes: (coupleId: string) =>
-        prisma.box.findMany({
-            where: { coupleId }
-        }),
+    findSharedBoxes: function(coupleId: string) {
+        return prisma.box.findMany({
+            where: { coupleId },
+        });
+    },
 
-    create: (data: CreateBoxInput & { coupleId: string | null; createdByUserId: string }) =>
-        prisma.box.create({ data }),
+    create: function(data: CreateBoxInput & { coupleId: string | null; createdByUserId: string }) {
+        return prisma.box.create({ data });
+    },
 
-    update: (id: string, data: UpdateBoxInput) =>
-        prisma.box.update({ where: { id }, data }),
+    update: function(id: string, data: UpdateBoxInput) {
+        return prisma.box.update({ where: { id }, data });
+    },
 
-    updateCoupleId: (id: string, coupleId: string | null) =>
-        prisma.box.update({ where: { id }, data: { coupleId } }),
+    updateCoupleId: function(id: string, coupleId: string | null) {
+        return prisma.box.update({ where: { id }, data: { coupleId } });
+    },
 
-    delete: (id: string) =>
-        prisma.box.delete({ where: { id } })
-}
+    delete: function(id: string) {
+        return prisma.box.delete({ where: { id } });
+    },
+
+
+};

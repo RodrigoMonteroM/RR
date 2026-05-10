@@ -1,76 +1,57 @@
-import { logger } from "@/lib/logger";
-import { userRepository } from "@/repositories/user.repository";
-import { CreateUserInput } from "@/schema/userSchema";
+import {userRepository} from "@/repositories/user.repository";
+import {CreateUserInput, UpdateUserInput} from "@/schema/userSchema";
 
 export default class UserService {
     static async getUserById(id: string) {
-        try {
-            return await userRepository.findById(id);
-        } catch (error: unknown) {
-            logger.error("getUserById failed", error);
-            throw error;
-        }
+        return await userRepository.findById(id);
     }
 
     static async getUserByEmail(email: string) {
-        try {
-            return await userRepository.findByEmail(email);
-        } catch (error: unknown) {
-            logger.error("getUserByEmail failed", error);
-            throw error;
-        }
+        return await userRepository.findByEmail(email);
     }
 
     static async getUserByNickname(nickname: string) {
-        try {
-            return await userRepository.findByNickname(nickname);
-        } catch (error: unknown) {
-            logger.error("getUserByNickname failed", error);
-            throw error;
-        }
+        return await userRepository.findByNickname(nickname);
     }
 
     static async createUser(data: CreateUserInput) {
-        try {
-            return await userRepository.create(data);
-        } catch (error: unknown) {
-            logger.error("createUser failed", error);
-            throw error;
-        }
+        return await userRepository.create(data);
     }
 
     static async searchUsers(query: string, currentUserId: string) {
-        try {
-            return await userRepository.searchByQuery(query, currentUserId);
-        } catch (error: unknown) {
-            logger.error("searchUsers failed", error);
-            throw error;
-        }
+        return await userRepository.searchByQuery(query, currentUserId);
     }
 
     static async getUserByEmailOrNickname(email: string, nickname: string) {
-        try {
-            return await userRepository.searchUserByEmailorNickname(email, nickname);
-        } catch (error: unknown) {
-            logger.error("getUserByEmailOrNickname faild: ", error)
-        }
+        return await userRepository.searchUserByEmailOrNickname(email, nickname);
     }
 
-    static async updateUser(id: string, data: Record<string, unknown>) {
-        try {
-            return await userRepository.update(id, data);
-        } catch (error: unknown) {
-            logger.error("updateUser failed", error);
-            throw error;
-        }
+    static async updateUser(id: string, data: UpdateUserInput) {
+        return await userRepository.update(id, data);
     }
 
     static async getUserByResetToken(token: string) {
-        try {
-            return await userRepository.findByResetToken(token);
-        } catch (error: unknown) {
-            logger.error("getUserByResetToken failed", error);
-            throw error;
-        }
+        return await userRepository.findByResetToken(token);
+    }
+
+    static async updatePassword(id: string, password: string) {
+        return await userRepository.update(id, {
+            password
+        });
+    }
+
+
+    static async setResetToken(id: string, token: string, expiry: Date) {
+        return await userRepository.update(id, {
+            resetToken: token,
+            resetTokenExpirity: expiry,
+        })
+    }
+
+    static async clearResetToken(id: string) {
+        return await userRepository.update(id, {
+            resetTokenExpirity: null,
+            resetToken: null
+        })
     }
 }

@@ -9,6 +9,7 @@ import { logger } from "@/lib/logger";
 import cors from "cors";
 import helmet from "helmet";
 import {env} from '@/lib/env';
+import {errorHandler} from "@/middlewares/errorHandler";
 
 const app = express();
 const port = env.PORT || 3000;
@@ -30,6 +31,8 @@ app.use("/api", authRouter);
 app.use("/api", userRouter);
 app.use("/api", boxRouter);
 app.use("/api", itemRouter);
+
+app.use(errorHandler);
 
 app.listen(port, () => {
     logger.server(`Listening on http://localhost:${port}`);
