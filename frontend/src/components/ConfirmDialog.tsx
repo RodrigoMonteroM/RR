@@ -18,8 +18,8 @@ export default function ConfirmDialog({
   onConfirm,
   title,
   message,
-  confirmText = 'Confirmar',
-  cancelText = 'Cancelar',
+  confirmText = 'Conferma',
+  cancelText = 'Annulla',
   variant = 'default',
 }: ConfirmDialogProps) {
   if (!open) return null

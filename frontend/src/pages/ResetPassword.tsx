@@ -1,4 +1,4 @@
-import { Lock, CheckCircle, AlertCircle } from 'lucide-react'
+import { Lock, AlertCircle } from 'lucide-react'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'

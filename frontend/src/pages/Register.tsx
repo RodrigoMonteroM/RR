@@ -240,7 +240,7 @@ export default function Register() {
                 </div>
               </div>
 
-              {/* Conferma password */}
+              {/* Confirm password */}
               <div className="space-y-1.5">
                 <Label htmlFor="confirmPassword">Conferma password</Label>
                 <div className="relative group">

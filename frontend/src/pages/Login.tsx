@@ -195,7 +195,7 @@ export default function Login() {
                 className="w-full bg-primary hover:bg-[#9d6268] shadow-[0_2px_14px_rgba(180,117,122,0.38)]
                            hover:shadow-[0_4px_20px_rgba(180,117,122,0.48)] transition-all duration-200"
               >
-                {loginMutation.isPending ? 'Accedendo...' : 'Accedi'}
+                {loginMutation.isPending ? 'Accesso in corso...' : 'Accedi'}
               </Button>
             </form>
 

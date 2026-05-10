@@ -24,6 +24,11 @@ export interface Item {
   boxId: string;
   createdByUserId: string;
   createdAt: string;
+  completed: boolean;
+  createdBy: {
+    id: string;
+    nickname: string;
+  };
 }
 
 export interface BoxWithItems extends Box {

@@ -1,10 +1,13 @@
 import { ArrowLeft, Package, Calendar, Pencil, Trash2, Loader2 } from 'lucide-react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useBox, useBoxes } from '@/hooks/useBoxes'
+import { useItems } from '@/hooks/useItems'
 import { Button } from '@/components/ui/button'
 import { useState } from 'react'
 import EditBoxModal from '@/components/EditBoxModal'
 import ConfirmDialog from '@/components/ConfirmDialog'
+import { CreateItemForm } from '@/components/CreateItemForm'
+import { ItemList } from '@/components/ItemList'
 import { toast } from 'sonner'
 
 export default function BoxDetail() {
@@ -12,6 +15,7 @@ export default function BoxDetail() {
   const navigate = useNavigate()
   const { data: box, isLoading, error } = useBox(id!)
   const { deleteBox } = useBoxes()
+  const { items, isLoading: itemsLoading, createItem, updateItem, deleteItem, toggleItem } = useItems(id!)
   const [showEdit, setShowEdit] = useState(false)
   const [showDelete, setShowDelete] = useState(false)
 
@@ -19,10 +23,10 @@ export default function BoxDetail() {
     try {
       if (!id) return
       await deleteBox(id)
-      toast.success('Box eliminado')
+      toast.success('Box eliminato')
       navigate('/')
     } catch {
-      toast.error('Error al eliminar el box')
+      toast.error('Errore nell\'eliminazione del box')
     }
   }
 
@@ -38,13 +42,13 @@ export default function BoxDetail() {
     return (
       <div className="min-h-screen bg-background flex flex-col items-center justify-center gap-4">
         <Package size={48} className="text-muted-foreground opacity-30" />
-        <p className="text-muted-foreground">Box no encontrado</p>
-        <Button onClick={() => navigate('/')}>Volver al inicio</Button>
+        <p className="text-muted-foreground">Box non trovato</p>
+        <Button onClick={() => navigate('/')}>Torna alla home</Button>
       </div>
     )
   }
 
-  const date = new Date(box.createdAt).toLocaleDateString('es-ES', {
+  const date = new Date(box.createdAt).toLocaleDateString('it-IT', {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
@@ -92,14 +96,14 @@ export default function BoxDetail() {
               <button
                 onClick={() => setShowEdit(true)}
                 className="p-2 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
-                title="Editar"
+                title="Modifica"
               >
                 <Pencil size={16} />
               </button>
               <button
                 onClick={() => setShowDelete(true)}
                 className="p-2 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
-                title="Eliminar"
+                title="Elimina"
               >
                 <Trash2 size={16} />
               </button>
@@ -113,16 +117,20 @@ export default function BoxDetail() {
           )}
         </div>
 
-        {/* Items placeholder */}
-        <div className="card-base px-6 py-10 animate-fade-up-1">
-          <div className="text-center">
-            <Package size={32} className="mx-auto mb-3 text-muted-foreground opacity-30" />
-            <p className="text-sm text-muted-foreground mb-1">Los items llegarán pronto</p>
-            <p className="text-xs text-muted-foreground/60">
-              Esta sección se habilitará en la próxima fase
-            </p>
-          </div>
-        </div>
+        {/* Create item */}
+        <CreateItemForm
+          onSubmit={createItem}
+          isLoading={itemsLoading}
+        />
+
+        {/* Items list */}
+        <ItemList
+          items={items}
+          isLoading={itemsLoading}
+          onUpdate={updateItem}
+          onDelete={deleteItem}
+          onToggle={toggleItem}
+        />
       </div>
 
       {/* Modals */}
@@ -135,9 +143,9 @@ export default function BoxDetail() {
         open={showDelete}
         onClose={() => setShowDelete(false)}
         onConfirm={handleDelete}
-        title="Eliminar box"
-        message={`¿Estás seguro de que querés eliminar "${box.name}"? Esta acción no se puede deshacer.`}
-        confirmText="Eliminar"
+        title="Elimina Box"
+        message={`Sei sicuro di voler eliminare "${box.name}"? Questa azione non può essere annullata.`}
+        confirmText="Elimina"
         variant="destructive"
       />
     </div>

@@ -28,12 +28,19 @@ export function useItems(boxId: string) {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: itemsKey(boxId) }),
   });
 
+  const toggleMutation = useMutation({
+    mutationFn: ({ id, completed }: { id: string; completed: boolean }) =>
+      itemService.toggleCompleted(id, completed),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: itemsKey(boxId) }),
+  });
+
   return {
     items: query.data ?? [],
     isLoading: query.isLoading,
     error: query.error,
     createItem: createMutation.mutateAsync,
-    updateItem: updateMutation.mutateAsync,
-    deleteItem: deleteMutation.mutateAsync,
+    updateItem: (id: string, content: string) => updateMutation.mutateAsync({ id, content }),
+    deleteItem: (id: string) => deleteMutation.mutateAsync(id),
+    toggleItem: (id: string, completed: boolean) => toggleMutation.mutateAsync({ id, completed }),
   };
 }

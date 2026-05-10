@@ -20,4 +20,9 @@ export const itemService = {
   deleteItem: async (id: string): Promise<void> => {
     await api.delete(`/items/${id}`);
   },
+
+  toggleCompleted: async (id: string, completed: boolean): Promise<Item> => {
+    const { data } = await api.patch<Item>(`/items/${id}/completed`, { completed });
+    return data;
+  },
 };

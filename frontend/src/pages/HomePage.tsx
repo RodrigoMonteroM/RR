@@ -349,9 +349,9 @@ export default function HomePage() {
         open={!!deletingBox}
         onClose={() => setDeletingBox(null)}
         onConfirm={handleDeleteBox}
-        title="Eliminar box"
-        message={deletingBox ? `¿Estás seguro de que querés eliminar "${deletingBox.name}"? Esta acción no se puede deshacer.` : ''}
-        confirmText="Eliminar"
+        title="Elimina Box"
+        message={deletingBox ? `Sei sicuro di voler eliminare "${deletingBox.name}"? Questa azione non può essere annullata.` : ''}
+        confirmText="Elimina"
         variant="destructive"
       />
     </div>

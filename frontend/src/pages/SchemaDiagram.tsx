@@ -48,7 +48,7 @@ export default function SchemaDiagram() {
                 Schema Diagram
               </h1>
               <p className="text-xs text-muted-foreground">
-                Prisma ORM · MySQL · 5 modelos
+                Prisma ORM · MySQL · 5 modelli
               </p>
             </div>
           </div>
@@ -74,7 +74,7 @@ export default function SchemaDiagram() {
             </div>
             <div className="flex items-center gap-1.5">
               <div className="w-4 h-0.5 bg-primary/60" />
-              <span>1:N Relación</span>
+                <span>1:N Relazione</span>
             </div>
             <div className="flex items-center gap-1.5">
               <div className="w-4 h-0.5 border-t-2 border-dashed border-muted-foreground/50" />
