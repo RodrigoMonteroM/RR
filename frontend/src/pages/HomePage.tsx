@@ -223,14 +223,14 @@ export default function HomePage() {
                         <Package size={14} className="text-primary" />
                       </div>
                       <span
-                        className="font-semibold text-sm text-foreground flex-1 cursor-pointer"
+                        className="font-semibold text-sm text-foreground flex-1 min-w-0 truncate cursor-pointer"
                         onClick={() => navigate(`/boxes/${box.id}`)}
                       >
                         {box.name}
                       </span>
 
-                      {/* Action buttons - visible on hover */}
-                      <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      {/* Action buttons - always visible on mobile, hover on desktop */}
+                      <div className="flex items-center gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
                         <button
                           onClick={() => handleToggleVisibility(box.id)}
                           className="p-1.5 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors duration-200"

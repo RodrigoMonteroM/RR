@@ -80,8 +80,8 @@ export default function BoxDetail() {
               <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
                 <Package size={20} className="text-primary" />
               </div>
-              <div>
-                <h1 className="font-display text-xl font-medium text-foreground">
+              <div className="min-w-0">
+                <h1 className="font-display text-xl font-medium text-foreground truncate">
                   {box.name}
                 </h1>
                 <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-0.5">

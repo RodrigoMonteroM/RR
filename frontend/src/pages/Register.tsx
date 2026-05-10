@@ -144,7 +144,7 @@ export default function Register() {
             {/* Form */}
             <form className="space-y-4" onSubmit={handleSubmit}>
               {/* First + Last Name row */}
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1.5">
                   <Label htmlFor="firstName">Nome</Label>
                   <div className="relative group">

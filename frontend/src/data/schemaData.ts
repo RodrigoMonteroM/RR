@@ -12,6 +12,7 @@ export interface TableField {
 export interface TableData {
   label: string
   fields: TableField[]
+  [key: string]: unknown
 }
 
 export type TableNode = Node<TableData, 'table'>

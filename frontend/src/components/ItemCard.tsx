@@ -57,7 +57,7 @@ export function ItemCard({ item, onUpdate, onDelete, onToggle }: ItemCardProps) 
 
         <div className="flex-1 min-w-0">
           <p
-            className={`text-sm leading-relaxed whitespace-pre-wrap ${
+            className={`text-sm leading-relaxed whitespace-pre-wrap break-words ${
               item.completed ? 'text-muted-foreground line-through opacity-60' : 'text-foreground'
             }`}
           >
@@ -71,7 +71,7 @@ export function ItemCard({ item, onUpdate, onDelete, onToggle }: ItemCardProps) 
               <span>{date}</span>
             </div>
 
-            <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+            <div className="flex items-center gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
               <button
                 onClick={() => setShowEdit(true)}
                 className="p-1.5 rounded-md text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
