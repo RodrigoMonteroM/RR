@@ -7,7 +7,11 @@ RUN bun install
 
 COPY . .
 
-RUN DATABASE_URL="mysql://dummy:dummy@localhost:3306/dummy" bunx prisma generate
+# Genera Prisma Client con un dummy URL SQLite
+RUN DATABASE_URL="file:./dev.db" bunx prisma generate
+
+# Crea directory per il database SQLite e assegna permessi
+RUN mkdir -p /app/data && chown -R appuser:appgroup /app/data
 
 RUN groupadd -r appgroup && useradd -r -g appgroup appuser \
     && chown -R appuser:appgroup /app
